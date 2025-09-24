@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Crypto Signals Bot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%2322c55e'/><text x='50%' y='54%' text-anchor='middle' font-size='28' fill='white' font-family='Arial' dy='.3em'>💹</text></svg>">
+  <style>
+    :root {
+      --brand-green: #22c55e;
+      --brand-yellow: #facc15;
+      --bg-gradient: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-yellow) 100%);
+      --input-bg: #f9fafb;
+    }
+    body {
+      margin: 0;
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      color: #222;
+    }
+    .centered {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      margin-bottom: 32px;
+    }
+    .big-card {
+      max-width: 600px;
+      width: 100%;
+      padding: 2.5rem;
+      margin-bottom: 32px;
+    }
+    .btn {
+      display: inline-block;
+      background: var(--brand-green);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 0.75em 2em;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin: 12px 0;
+    }
+    .btn:hover { background: #16a34a; }
+    .btn-yellow {
+      background: var(--brand-yellow);
+      color: #222;
+    }
+    .input {
+      width: 100%;
+      padding: 0.75em;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: var(--input-bg);
+      font-size: 1rem;
+    }
+    .error {
+      color: #dc2626;
+      font-size: 0.98em;
+      margin-bottom: 8px;
+    }
+    .success {
+      color: var(--brand-green);
+      font-size: 1em;
+      margin-bottom: 8px;
+    }
+    .logo-social {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 32px 0 8px 0;
+    }
+    .sketch-logo {
+      width: 70px; 
+      height: 70px;
+      margin-bottom: 8px;
+      border-radius: 10px;
+      background: var(--brand-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(34,197,94,0.18);
+      border: 3px solid var(--brand-yellow);
+    }
+    .sketch-logo svg {
+      width: 56px; 
+      height: 56px;
+      display: block;
+    }
+    .social-links {
+      display: flex;
+      gap: 16px;
+      margin-top: 6px;
+    }
+    .social-links a img {
+      width: 32px; height: 32px;
+      filter: drop-shadow(0 1px 2px #888);
+    }
+    .warning {
+      background: #fef3c7;
+      border-left: 5px solid #f59e42;
+      color: #d97706;
+      padding: 12px;
+      margin-bottom: 18px;
+      font-weight: 500;
+      border-radius: 6px;
+    }
+    .paymentinfo {
+      background: #f6f6f6;
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 16px;
+      font-size: 1.06em;
+      box-shadow: 0 2px 8px rgba(250,204,21,0.08);
+    }
+    .paymentinfo span { font-weight: 600; }
+    .telegram-link {
+      display: block;
+      margin: 14px 0 0 0;
+      color: var(--brand-green);
+      font-weight: bold;
+      text-decoration: underline dotted;
+      font-size: 1.06em;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      color: #fff;
+      opacity: 0.85;
+      font-size: 1em;
+    }
+    @media (max-width:600px) {
+      .card, .big-card { max-width: 98vw; padding: 1rem;}
+    }
+  </style>
+</head>
+<body>
+  <!-- SPA sections -->
+  <div id="landing" class="centered">
+    <div class="logo-social">
+      <div class="sketch-logo">
+        <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="28" cy="28" r="27" fill="#22c55e" stroke="#facc15" stroke-width="2"/>
+          <text x="50%" y="54%" text-anchor="middle" font-size="30" fill="white" font-family="Arial" dy=".3em">💹</text>
+        </svg>
+      </div>
+      <div style="font-size:1.15em;font-weight:500;">Follow our social:</div>
+      <div class="social-links">
+        <a href="https://youtube.com/@YourChannel" target="_blank"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/youtube/youtube-original.svg" alt="YouTube"></a>
+        <a href="https://t.me/elissa1345" target="_blank"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/telegram/telegram-original.svg" alt="Telegram"></a>
+        <a href="https://wa.me/YourWhatsAppNumber" target="_blank"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/whatsapp/whatsapp-original.svg" alt="WhatsApp"></a>
+        <a href="https://www.tiktok.com/@YourTikTok" target="_blank"><img src="https://static.thenounproject.com/png/3607699-200.png" alt="TikTok"></a>
+      </div>
+    </div>
+    <div class="card big-card" style="text-align:center;">
+      <h1 style="font-size:2.2em; color:var(--brand-green);font-weight:700;">Crypto Signals Bot</h1>
+      <p style="font-size:1.15em;font-weight:600;">Buy when confidence is equal to or greater than 75%.</p>
+      <p>Our bot uses expert strategies including <b>EMA, RSI, volume confirmation analysis, advanced candlestick recognition, trend strength analysis, Bollinger Bands, stochastic oscillator…</b></p>
+      <div class="warning">
+        ⚠️ Cryptos listed are risky. Avoid buying when the market is volatile, and only use funds you can afford to lose.
+      </div>
+      <button class="btn" onclick="showSection('register')">Get Started</button>
+    </div>
+    <div class="footer">&copy; <span id="year"></span> Crypto Signals Bot. All rights reserved.</div>
+  </div>
+
+  <div id="register" class="centered" style="display:none;">
+    <div class="card">
+      <h2 style="color:var(--brand-green);">Register</h2>
+      <form id="register-form">
+        <input class="input" type="email" id="reg-email" placeholder="Email" required>
+        <input class="input" type="password" id="reg-pass" placeholder="Password" required>
+        <div id="reg-error" class="error" style="display:none;"></div>
+        <button class="btn" type="submit">Sign Up</button>
+      </form>
+      <div style="text-align:center; margin-top:14px;">
+        Already have an account?
+        <button class="btn btn-yellow" onclick="showSection('login')">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="login" class="centered" style="display:none;">
+    <div class="card">
+      <h2 style="color:var(--brand-green);">Login</h2>
+      <form id="login-form">
+        <input class="input" type="email" id="log-email" placeholder="Email" required>
+        <input class="input" type="password" id="log-pass" placeholder="Password" required>
+        <div id="log-error" class="error" style="display:none;"></div>
+        <button class="btn" type="submit">Login</button>
+      </form>
+      <div style="text-align:center; margin-top:14px;">
+        Don't have an account?
+        <button class="btn btn-yellow" onclick="showSection('register')">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="entercode" class="centered" style="display:none;">
+    <div class="card">
+      <h2 style="color:var(--brand-green);">Enter Active Code</h2>
+      <form id="code-form">
+        <input class="input" type="text" id="code-input" placeholder="Enter your code (e.g. CODE-12345)" required>
+        <div id="code-status" class="error" style="display:none;"></div>
+        <button class="btn" type="submit">Access Bot</button>
+      </form>
+      <div style="text-align:center; margin-top:14px;">
+        Haven't paid yet?
+        <button class="btn btn-yellow" onclick="showSection('subscription')">Subscribe Now</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="subscription" class="centered" style="display:none;">
+    <div class="card big-card">
+      <h1 style="color:var(--brand-green);font-size:1.7em;">Subscription</h1>
+      <div style="font-size:1.15em;font-weight:600;">
+        Unlock full access to our bot for only <span style="color:var(--brand-yellow);font-weight:bold;">10 USDT</span> per month!
+      </div>
+      <div class="paymentinfo">
+        <div><span>Binance ID:</span> 835733515 <span style="color:#888;">(MR.EB)</span></div>
+        <div><span>OKX ID:</span> 636965144656123106 <span style="color:#888;">(MR.EB)</span></div>
+        <div><span>USDT (TRC20):</span> TXoFYJGC64FdxQKmbjrSeVE9t6KuBPanM6</div>
+        <div><span>BTC (BTC):</span> 3FwkYCbDEN835pbkWXA8FQjfYBn2dDXBcH</div>
+        <div><span>MTN Mobile Money:</span> <span style="color:var(--brand-yellow);font-weight:bold;">+YourNumber</span> <span style="color:#888;">(MR.EB)</span></div>
+        <a class="telegram-link" href="https://t.me/elissa1345" target="_blank">👉👉 If you want to pay using another method, click here to chat with our agent (@elissa1345)</a>
+      </div>
+      <a
+        href="https://docs.google.com/forms/d/e/1FAIpQLSd1fPBiqMrf5knYCtlNZbs5WTB6QR_uW7e96uEeJ0YlC1xn0w/viewform?usp=header"
+        target="_blank"
+        class="btn"
+        style="width:100%;"
+      >
+        Submit your payment proof to receive your active code
+      </a>
+      <div style="margin-top: 14px; color: #444;">
+        When you submit payment proof, you’ll receive your active code manually via your contact details.<br>
+        When your subscription expires, you'll need to pay again to get a new code.
+      </div>
+      <div style="text-align:center; margin-top:14px;">
+        <button class="btn btn-yellow" onclick="showSection('entercode')">I have a code</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="bot" class="centered" style="display:none;">
+    <div class="card big-card">
+      <h2 style="color:var(--brand-green);">Welcome to Crypto Signals Bot!</h2>
+      <p>Your subscription is active. Here you'd put your bot interface or signals. <br>
+      <span style="color:var(--brand-yellow);font-weight:bold;">Subscription is valid!</span></p>
+      <div style="margin-top:16px;">
+        <button class="btn btn-yellow" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Section navigation
+    function showSection(section) {
+      ['landing','register','login','entercode','subscription','bot'].forEach(id => {
+        document.getElementById(id).style.display = (id === section) ? 'flex' : 'none';
+      });
+    }
+    // Initial landing
+    document.getElementById('year').innerText = new Date().getFullYear();
+    showSection('landing');
+
+    // Registration
+    document.getElementById('register-form').onsubmit = function(e) {
+      e.preventDefault();
+      const email = document.getElementById('reg-email').value.trim();
+      const pass = document.getElementById('reg-pass').value;
+      const error = document.getElementById('reg-error');
+      if (!email || !pass) {
+        error.innerText = "Please enter both fields."; error.style.display = "block"; return;
+      }
+      localStorage.setItem('user', JSON.stringify({email, pass}));
+      error.style.display = "none";
+      showSection('login');
+    };
+
+    // Login
+    document.getElementById('login-form').onsubmit = function(e) {
+      e.preventDefault();
+      const email = document.getElementById('log-email').value.trim();
+      const pass = document.getElementById('log-pass').value;
+      const error = document.getElementById('log-error');
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.email !== email || user.pass !== pass) {
+        error.innerText = "Invalid credentials."; error.style.display = "block"; return;
+      }
+      error.style.display = "none";
+      localStorage.setItem('loggedIn','true');
+      showSection('entercode');
+    };
+
+    // Code Entry
+    document.getElementById('code-form').onsubmit = async function(e) {
+      e.preventDefault();
+      const code = document.getElementById('code-input').value.trim();
+      const status = document.getElementById('code-status');
+      status.style.display = "none";
+      status.className = "error";
+      status.innerText = "";
+      status.style.display = "block";
+      status.innerText = "Checking...";
+      try {
+        const res = await fetch('/codes/codes.json');
+        if (!res.ok) throw new Error('Network error');
+        const codes = await res.json();
+        if (codes.includes(code)) {
+          localStorage.setItem('activeCode', code);
+          status.className = "success";
+          status.innerText = "Code valid!";
+          setTimeout(() => showSection('bot'), 800);
+        } else {
+          status.className = "error";
+          status.innerText = "Invalid or expired code. Please pay subscription and submit payment proof.";
+        }
+      } catch (err) {
+        status.className = "error";
+        status.innerText = "Error checking code. Try again later.";
+      }
+    };
+
+    // Bot Section Protection
+    function showBotIfValid() {
+      if (localStorage.getItem('activeCode')) {
+        showSection('bot');
+      } else {
+        showSection('entercode');
+      }
+    }
+
+    // Logout
+    function logout() {
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('activeCode');
+      showSection('landing');
+    }
+
+    // SPA redirect logic, keep bot locked
+    window.addEventListener('DOMContentLoaded', () => {
+      // Optional: check access on reload
+      if (localStorage.getItem('loggedIn')) {
+        if (localStorage.getItem('activeCode')) {
+          showSection('bot');
+        } else {
+          showSection('entercode');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
