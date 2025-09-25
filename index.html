@@ -328,7 +328,12 @@
           localStorage.setItem('activeCode', code);
           status.className = "success";
           status.innerText = "Code valid!";
-          setTimeout(() => window.location.href = "bot .html", 800);
+          if (codes.includes(code)) {
+  localStorage.setItem('activeCode', code);
+  status.className = "success";
+  status.innerText = "Code valid!";
+  setTimeout(() => window.location.href = "bot .html", 800); // <-- redirect to bot
+}
         } else {
           status.className = "error";
           status.innerText = "Invalid or expired code. Please pay subscription and submit payment proof.";
