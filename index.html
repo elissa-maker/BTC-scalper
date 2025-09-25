@@ -358,13 +358,11 @@
     // SPA redirect logic, keep bot locked
     window.addEventListener('DOMContentLoaded', () => {
       // Optional: check access on reload
-      if (localStorage.getItem('loggedIn')) {
-        if (codes.includes(code)) {
-  localStorage.setItem('activeCode', code);
-  status.className = "success";
-  status.innerText = "Code valid!";
-  setTimeout(() => window.location.href = "bot .html", 800); // <-- redirect to bot
-}
+        if (localStorage.getItem('loggedIn')) {
+        if (localStorage.getItem('activeCode')) {
+          showSection('bot');
+        } else {
+          showSection('entercode');
         }
       }
     });
