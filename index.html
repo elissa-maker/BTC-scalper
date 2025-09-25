@@ -328,7 +328,7 @@
           localStorage.setItem('activeCode', code);
           status.className = "success";
           status.innerText = "Code valid!";
-          setTimeout(() => showSection('bot'), 800);
+          setTimeout(() => window.location.href = "bot .html", 800);
         } else {
           status.className = "error";
           status.innerText = "Invalid or expired code. Please pay subscription and submit payment proof.";
