@@ -1,1 +1,173 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Crypto Signals Bot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%2322c55e'/><text x='50%' y='54%' text-anchor='middle' font-size='28' fill='white' font-family='Arial' dy='.3em'>💹</text></svg>">
+  <style>
+    :root {
+      --brand-green: #22c55e;
+      --brand-yellow: #facc15;
+      --bg-gradient: linear-gradient(135deg, var(--brand-green) 0%, var(--brand-yellow) 100%);
+      --input-bg: #f9fafb;
+      --panel: #21262d;
+      --accent: #00d395;
+      --accent2: #ff3c51;
+      --text: #e6edf3;
+      --subtle: #7a8593;
+      --good: #14c784;
+      --bad: #ff5b6b;
+    }
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Montserrat', Arial, sans-serif;
+      background: #161b22;
+      color: var(--text);
+    }
+    .centered {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-gradient);
+    }
+    .card, .big-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 32px #0002;
+      padding: 36px 26px 29px 26px;
+      color: #1a212b;
+      max-width: 400px;
+      width: 100%;
+      margin: 18px 0;
+      text-align: center;
+    }
+    .big-card { max-width: 470px; }
+    .input {
+      width: 100%;
+      padding: 12px 13px;
+      border-radius: 8px;
+      outline: none;
+      border: 1.5px solid #e3e9f0;
+      margin-bottom: 16px;
+      font-size: 1.05em;
+      background: var(--input-bg);
+      transition: border-color .17s;
+    }
+    .input:focus { border-color: var(--brand-green); }
+    .btn {
+      background: var(--brand-green);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 11px 27px;
+      font-size: 1.14em;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      margin-bottom: 2px;
+      transition: background .2s;
+      box-shadow: 0 2px 10px #22c55e17;
+    }
+    .btn-yellow { background: var(--brand-yellow); color: #164300; }
+    .btn:active { background: #18a055; }
+    .error {
+      color: #d10a0a;
+      font-weight: 500;
+      margin-bottom: 10px;
+      display: none;
+      font-size: 0.98em;
+    }
+    .success {
+      color: var(--brand-green);
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: none;
+      font-size: 1em;
+    }
+    .logo-social {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+    .sketch-logo { margin-bottom: 10px; }
+    .social-links {
+      display: flex;
+      gap: 22px;
+      margin-top: 8px;
+    }
+    .social-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #f3f3f3;
+      transition: box-shadow .18s, background .18s;
+      box-shadow: 0 1.5px 0 0 #e0e0e0;
+    }
+    .social-links a:hover { background: #facc15; }
+    .social-links svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+    }
+    .footer {
+      margin-top: 45px;
+      color: #fff;
+      opacity: 0.7;
+      font-size: 1em;
+      text-align: center;
+    }
+    .warning {
+      background: #facc1566;
+      color: #c20000;
+      padding: 8px 0 8px 0;
+      border-radius: 9px;
+      font-size: 1em;
+      font-weight: 500;
+      margin: 11px 0 17px 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Landing Section -->
+  <div id="landing" class="centered">
+    <div>
+      <div class="logo-social">
+        <div class="sketch-logo">
+          <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+            <circle cx="28" cy="28" r="27" fill="#22c55e" stroke="#facc15" stroke-width="2"/>
+            <text x="50%" y="54%" text-anchor="middle" font-size="30" fill="white" font-family="Arial" dy=".3em">💹</text>
+          </svg>
+        </div>
+        <div style="font-size:1.15em;font-weight:500;">Follow our social:</div>
+        <div class="social-links">
+          <!-- YouTube -->
+          <a href="https://youtube.com/@YourChannel" target="_blank" title="YouTube">
+            <svg viewBox="0 0 32 32"><g><circle fill="#FF0000" cx="16" cy="16" r="16"/><polygon fill="#fff" points="13,11 22,16 13,21"/></g></svg>
+          </a>
+          <!-- Telegram -->
+          <a href="https://t.me/elissa1345" target="_blank" title="Telegram">
+            <svg viewBox="0 0 32 32"><circle fill="#229ED9" cx="16" cy="16" r="16"/><path fill="#fff" d="M23.6 10.5l-2.5 11.7c-.2.7-.6.9-1.1.6l-3.1-2.3-1.5 1.5c-.2.2-.4.4-.8.4l.3-3.5 6.4-5.8c.3-.3-.1-.5-.4-.3l-8 5.1-3.5-1.1c-.8-.3-.8-.8.2-1.1l13.7-5.3c.6-.2 1.1.1.9 1z"/></svg>
+          </a>
+          <!-- X/Twitter -->
+          <a href="https://twitter.com" target="_blank" title="X">
+            <svg viewBox="0 0 32 32"><circle fill="#000" cx="16" cy="16" r="16"/><path fill="#fff" d="M23.3 10.3h-2.3l-3.5 4.3-3-4.3H8.7l4.8 7-5.1 6.6h2.4l3.9-4.8 3.3 4.8h3l-5.2-7z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div style="font-size:1.18em;font-weight:600;margin-top:12px;">
+        Start trading with powerful, expert crypto signals.
+      </div>
+      <p>Our bot uses expert strategies including <b>EMA, RSI, volume confirmation analysis, advanced candlestick recognition, trend strength analysis, Bollinger Bands, stochastic oscillator…</b></p>
+      <div class="warning">
+        ⚠️ Cryptos listed are risky. Avoid buying when the market is volatile, and only use funds you can afford to lose.
+      </div>
+      <button class="btn" onclick="showSection('register')">Get Started</button>
+      <div class="footer">&copy; <span id="year"></span> Crypto Signals Bot. All rights reserved.</div>
+    </div>
+  </div>
