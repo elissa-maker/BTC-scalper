@@ -171,3 +171,104 @@
       <div class="footer">&copy; <span id="year"></span> Crypto Signals Bot. All rights reserved.</div>
     </div>
   </div>
+  <!-- Register -->
+  <div id="register" class="centered" style="display:none;">
+    <div class="card">
+      <h2 style="color:var(--brand-green);">Register</h2>
+      <form id="register-form">
+        <input class="input" type="email" id="reg-email" placeholder="Email" required>
+        <input class="input" type="password" id="reg-pass" placeholder="Password" required>
+        <div id="reg-error" class="error"></div>
+        <button class="btn" type="submit">Sign Up</button>
+      </form>
+      <div style="text-align:center; margin-top:14px;">
+        Already have an account?
+        <button class="btn btn-yellow" onclick="showSection('login')">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login -->
+  <div id="login" class="centered" style="display:none;">
+    <div class="card">
+      <h2 style="color:var(--brand-green);">Login</h2>
+      <form id="login-form">
+        <input class="input" type="email" id="log-email" placeholder="Email" required>
+        <input class="input" type="password" id="log-pass" placeholder="Password" required>
+        <div id="log-error" class="error"></div>
+        <button class="btn" type="submit">Login</button>
+      </form>
+      <div style="text-align:center; margin-top:14px;">
+        Don't have an account?
+        <button class="btn btn-yellow" onclick="showSection('register')">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enter Code -->
+  <div id="entercode" class="centered" style="display:none;">
+    <div class="card">
+      <h2 style="color:var(--brand-green);">Enter Active Code</h2>
+      <form id="code-form">
+        <input class="input" type="text" id="code-input" placeholder="Enter your code (e.g. CODE-12345)" required>
+        <div id="code-status" class="error" style="display:none;"></div>
+        <button class="btn" type="submit">Access Bot</button>
+      </form>
+      <div style="text-align:center; margin-top:14px;">
+        Haven't paid yet?
+        <button class="btn btn-yellow" onclick="showSection('subscription')">Subscribe Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subscription -->
+  <div id="subscription" class="centered" style="display:none;">
+    <div class="big-card">
+      <h1 style="color:var(--brand-green);font-size:1.7em;">Subscription</h1>
+      <div style="font-size:1.15em;font-weight:600;">
+        Unlock full access to our bot for only <span style="color:var(--brand-yellow);font-weight:bold;">10 USDT</span> per month!
+      </div>
+      <div class="paymentinfo" style="margin: 18px 0;">
+        <div><span>Binance ID:</span> 835733515 <span style="color:#888;">(MR.EB)</span></div>
+        <div><span>OKX ID:</span> 636965144656123106 <span style="color:#888;">(MR.EB)</span></div>
+        <div><span>USDT (TRC20):</span> TXoFYJGC64FdxQKmbjrSeVE9t6KuBPanM6</div>
+        <div><span>BTC (BTC):</span> 3FwkYCbDEN835pbkWXA8FQjfYBn2dDXBcH</div>
+        <div><span>MOMO CODE</span> <span style="color:var(--brand-yellow);font-weight:bold;">612847</span> <span style="color:#888;">(ELISSA)</span></div>
+        <a class="telegram-link" href="https://t.me/elissa1345" target="_blank">👉👉 If you want to pay using another method, click here to chat with our agent (@elissa1345)</a>
+      </div>
+      <a
+        href="https://docs.google.com/forms/d/e/1FAIpQLSd1fPBiqMrf5knYCtlNZbs5WTB6QR_uW7e96uEeJ0YlC1xn0w/viewform?usp=header"
+        target="_blank"
+        class="btn"
+        style="width:100%;"
+      >
+        Submit your payment proof to receive your active code
+      </a>
+      <div style="margin-top: 14px; color: #444;">
+        When you submit payment proof, you’ll receive your active code manually via your contact details.<br>
+        When your subscription expires, you'll need to pay again to get a new code.
+      </div>
+      <div style="text-align:center; margin-top:14px;">
+        <button class="btn btn-yellow" onclick="showSection('entercode')">I have a code</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Guide/Screenshots Section -->
+  <div id="guide" style="display:none;">
+    <h2>How to Use the Bot (Step-by-step Guide)</h2>
+    <div class="guide-images">
+      <img src="screenshot1.jpg" alt="Step 1: How to use the bot" />
+      <img src="screenshot2.jpg" alt="Step 2: Bot trading in action" />
+    </div>
+    <div style="margin-top: 18px;">
+      <button class="btn" onclick="showSection('landing')">Back to Home</button>
+    </div>
+  </div>
+
+  <!-- Bot Section SPA -->
+  <div id="bot" class="centered" style="display:none;">
+    <div class="container" id="bot-main-container">
+      <!-- Bot UI will be injected here by script -->
+    </div>
+  </div>
