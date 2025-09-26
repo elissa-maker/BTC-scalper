@@ -471,3 +471,168 @@
       localStorage.removeItem('activeCode');
       showSection('landing');
     }
+    // === BOT SPA LOGIC ===
+    let botInitialized = false;
+    function initBot() {
+      if (botInitialized) return; // Only initialize once per session
+      botInitialized = true;
+
+      // --- Inject Bot UI ---
+      const container = document.getElementById("bot-main-container");
+      container.innerHTML = `
+        <h1>MEXC Predictor.bot</h1>
+        <div class="toggles">
+          <div class="toggle-group" id="symbol-toggle">
+            <button class="toggle-btn selected" data-symbol="BTCUSDT">BTC</button>
+            <button class="toggle-btn" data-symbol="ETHUSDT">ETH</button>
+          </div>
+          <div class="toggle-group" id="interval-toggle">
+            <button class="toggle-btn selected" data-interval="5">5 min</button>
+            <button class="toggle-btn" data-interval="15">15 min</button>
+          </div>
+        </div>
+        <div class="market-panel">
+          <div class="status-bar">
+            <span id="status-dot" class="status-dot"></span>
+            <span id="status-label">Stopped</span>
+          </div>
+          <div class="market-symbol" id="market-symbol">BTC/USDT</div>
+          <div class="price-row">
+            <span id="live-price">--</span>
+            <span class="trend" id="trend">--</span>
+          </div>
+        </div>
+        <div class="signal-panel">
+          <div class="signal-row">
+            <span class="signal" id="signal">--</span>
+            <span class="confidence" id="confidence">--</span>
+          </div>
+          <div class="timer" id="timer">--:--</div>
+        </div>
+        <div class="startstop-row">
+          <button class="btn" id="start-btn">Start</button>
+          <button class="btn stop" id="stop-btn" disabled>Stop</button>
+          <button class="btn" onclick="logout()">Logout</button>
+        </div>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Pair</th>
+              <th>Interval</th>
+              <th>Signal</th>
+              <th>Start</th>
+              <th>Close</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody id="history-body"></tbody>
+        </table>
+        <div class="footer">Bot powered by <b>MEXC</b> | <a style="color:var(--brand-yellow);" href="#" onclick="showSection('guide')">How to use?</a></div>
+      `;
+
+      // --- Bot Logic Variables ---
+      const API_BASE = "https://api.mexc.com";
+      const SYMBOLS = {
+        BTCUSDT: {symbol: "BTCUSDT", display: "BTC/USDT", minMove: 0.1},
+        ETHUSDT: {symbol: "ETHUSDT", display: "ETH/USDT", minMove: 0.01}
+      };
+      let state = {
+        running: false,
+        symbol: "BTCUSDT",
+        interval: 5,
+        timer: null,
+        countdown: 0,
+        price: null,
+        prevPrice: null,
+        trend: null,
+        signal: "--",
+        confidence: "--",
+        startPrice: null,
+        closePrice: null,
+        currentSignalInfo: null,
+        history: []
+      };
+
+      // --- DOM ---
+      const $symbolToggle = document.getElementById("symbol-toggle");
+      const $intervalToggle = document.getElementById("interval-toggle");
+      const $marketSymbol = document.getElementById("market-symbol");
+      const $livePrice = document.getElementById("live-price");
+      const $trend = document.getElementById("trend");
+      const $signal = document.getElementById("signal");
+      const $confidence = document.getElementById("confidence");
+      const $timer = document.getElementById("timer");
+      const $startBtn = document.getElementById("start-btn");
+      const $stopBtn = document.getElementById("stop-btn");
+      const $statusDot = document.getElementById("status-dot");
+      const $statusLabel = document.getElementById("status-label");
+      const $historyBody = document.getElementById("history-body");
+
+      // --- API Fetches ---
+      async function fetchKlines(symbol, interval, limit=50) {
+        const intervalMap = {5:"5m",15:"15m"};
+        const url = `${API_BASE}/api/v3/klines?symbol=${symbol}&interval=${intervalMap[interval]}&limit=${limit}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Failed to fetch klines");
+        return (await res.json()).map(arr => Number(arr[4]));
+      }
+      let priceFeedInterval = null;
+      function startPriceFeed() {
+        stopPriceFeed();
+        priceFeedInterval = setInterval(async () => {
+          try {
+            const url = `${API_BASE}/api/v3/ticker/price?symbol=${state.symbol}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            const price = parseFloat(data.price);
+            state.prevPrice = state.price;
+            state.price = price;
+            if (state.prevPrice !== null) {
+              state.trend = price > state.prevPrice ? "Rising" : price < state.prevPrice ? "Falling" : "--";
+            }
+            updatePriceUI();
+          } catch {}
+        }, 2000);
+      }
+      function stopPriceFeed() { if(priceFeedInterval) clearInterval(priceFeedInterval); }
+
+      // --- Bot Signal Logic (stub/simple random for demo) ---
+      function getSignalFromIndicators(closes) {
+        let signal, confidence;
+        if (closes.length < 10) {
+          signal = "--"; confidence = "--";
+        } else {
+          signal = Math.random()>0.5 ? "UP" : "DOWN";
+          confidence = 51 + Math.random()*8;
+        }
+        confidence = Math.max(50, Math.min(98, Math.round(confidence)));
+        return {
+          signal,
+          confidence,
+          startPrice: closes[closes.length-1]
+        };
+      }
+      // --- Bot main logic ---
+      async function doSignalCycle() {
+        if (!state.running) return;
+        try {
+          let candles = await fetchKlines(state.symbol, state.interval, 50);
+          let sgl = getSignalFromIndicators(candles);
+          state.signal = sgl.signal;
+          state.confidence = sgl.confidence;
+          state.startPrice = sgl.startPrice;
+          state.currentSignalInfo = {
+            time: formatTime(Date.now()),
+            startPrice: sgl.startPrice,
+            signal: sgl.signal
+          };
+          updateSignalUI();
+          responsiveNotify(`Signal: ${sgl.signal} (${sgl.confidence}%)`);
+          state.countdown = state.interval*60;
+          updateTimerUI();
+          signalCountdown();
+        } catch {
+          responsiveNotify("Failed to generate signal.");
+        }
+      }
