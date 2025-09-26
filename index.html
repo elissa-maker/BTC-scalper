@@ -272,3 +272,202 @@
       <!-- Bot UI will be injected here by script -->
     </div>
   </div>
+    #bot .status-dot.running {
+      background: var(--good);
+      box-shadow: 0 0 6px #14c78477;
+    }
+    #bot .market-symbol {
+      font-size: 1.11rem;
+      font-weight: 600;
+      color: var(--accent2);
+      letter-spacing: 1px;
+    }
+    #bot .price-row {
+      margin: 6px 0 2px 0;
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    #bot .trend {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 2px;
+      padding: 2px 8px;
+      border-radius: 8px;
+      display: inline-block;
+      background: #162322;
+      color: var(--good);
+      transition: background .2s, color .2s;
+    }
+    #bot .trend.down {
+      background: #221818;
+      color: var(--bad);
+    }
+    #bot .signal-panel {
+      width: 100%;
+      background: #16222e;
+      border-radius: 10px;
+      padding: 20px 0 14px 0;
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #bot .signal-row {
+      display: flex;
+      align-items: center;
+      gap: 17px;
+      font-size: 1.35em;
+    }
+    #bot .signal {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1.2em;
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 13px #00d39544;
+    }
+    #bot .confidence {
+      color: var(--brand-yellow);
+      font-size: 0.99em;
+      font-weight: 600;
+    }
+    #bot .timer {
+      margin-top: 6px;
+      background: #10181c;
+      color: #fff;
+      font-size: 1.1em;
+      font-weight: 700;
+      padding: 5px 17px;
+      border-radius: 7px;
+      box-shadow: 0 1px 8px #14c78422;
+      letter-spacing: 2px;
+    }
+    #bot .startstop-row {
+      display: flex;
+      gap: 15px;
+      margin-top: 6px;
+      margin-bottom: 9px;
+      justify-content: center;
+    }
+    #bot .btn { font-size: 1rem; padding: 8px 22px; border-radius: 8px;}
+    #bot .btn.stop {
+      background: var(--accent2);
+      color: #fff;
+      box-shadow: 0 0 14px 2px #ff3c512a, 0 0 2px 0 #ff5b6b12;
+    }
+    #bot .history-table {
+      width: 100%;
+      background: #16222e;
+      border-radius: 9px;
+      margin-top: 13px;
+      color: var(--text);
+      font-size: 0.99em;
+      box-shadow: 0 2px 12px #2222;
+    }
+    #bot .history-table th,
+    #bot .history-table td {
+      padding: 7px 0;
+      text-align: center;
+      border-bottom: 1px solid #24304a;
+    }
+    #bot .history-table th { color: var(--brand-yellow); }
+    #bot .history-table tr:last-child td { border-bottom: none; }
+    #bot .result-win { color: var(--good); font-weight: 700;}
+    #bot .result-lose { color: var(--bad); font-weight: 700;}
+    #bot .footer { color: #7a8593; margin-top: 25px; }
+    @media (max-width: 600px) {
+      .card, .big-card, #bot .container { padding: 13vw 4vw 8vw 4vw; }
+      #bot .container { margin: 7vw 0; }
+      .guide-images img { width: 98vw; max-width: 98vw; }
+    }
+  </style>
+  <script>
+    // SPA Section Management
+    function showSection(section) {
+      ['landing','register','login','entercode','subscription','guide','bot'].forEach(id => {
+        document.getElementById(id).style.display = (id === section) ? 'flex' : 'none';
+      });
+      // Only initialize the bot UI+logic if showing bot
+      if(section === "bot") initBot();
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('year').innerText = new Date().getFullYear();
+      // Restore session
+      if (localStorage.getItem('loggedIn')) {
+        if (localStorage.getItem('activeCode')) {
+          showSection('bot');
+        } else {
+          showSection('entercode');
+        }
+      } else {
+        showSection('landing');
+      }
+    });
+    // Registration
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('register-form').onsubmit = function(e) {
+        e.preventDefault();
+        const email = document.getElementById('reg-email').value.trim();
+        const pass = document.getElementById('reg-pass').value;
+        const error = document.getElementById('reg-error');
+        if (!email || !pass) {
+          error.innerText = "Please enter both fields."; error.style.display = "block"; return;
+        }
+        localStorage.setItem('user', JSON.stringify({email, pass}));
+        error.style.display = "none";
+        showSection('login');
+      };
+      // Login
+      document.getElementById('login-form').onsubmit = function(e) {
+        e.preventDefault();
+        const email = document.getElementById('log-email').value.trim();
+        const pass = document.getElementById('log-pass').value;
+        const error = document.getElementById('log-error');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (user.email !== email || user.pass !== pass) {
+          error.innerText = "Invalid credentials."; error.style.display = "block"; return;
+        }
+        error.style.display = "none";
+        localStorage.setItem('loggedIn','true');
+        showSection('entercode');
+      };
+      // Code Entry
+      document.getElementById('code-form').onsubmit = async function(e) {
+        e.preventDefault();
+        const code = document.getElementById('code-input').value.trim();
+        const status = document.getElementById('code-status');
+        status.style.display = "none";
+        status.className = "error";
+        status.innerText = "";
+        status.style.display = "block";
+        status.innerText = "Checking...";
+        try {
+          const res = await fetch('codes/codes.json');
+          if (!res.ok) throw new Error('Network error');
+          const codes = await res.json();
+          if (codes.includes(code)) {
+            localStorage.setItem('activeCode', code);
+            status.className = "success";
+            status.innerText = "Code valid!";
+            setTimeout(() => showSection('bot'), 800);
+          } else {
+            status.className = "error";
+            status.innerText = "Invalid or expired code. Please pay subscription and submit payment proof.";
+          }
+        } catch (err) {
+          status.className = "error";
+          status.innerText = "Error checking code. Try again later.";
+        }
+      };
+    });
+    // Logout
+    function logout() {
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('activeCode');
+      showSection('landing');
+    }
