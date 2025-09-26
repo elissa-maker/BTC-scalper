@@ -636,3 +636,130 @@
           responsiveNotify("Failed to generate signal.");
         }
       }
+      // Timer/Countdown for signal duration
+      function signalCountdown() {
+        if (!state.running) return;
+        if (state.countdown <= 0) {
+          fetchClosePriceAndUpdateResult();
+          return;
+        }
+        updateTimerUI();
+        state.countdown--;
+        state.timer = setTimeout(signalCountdown, 1000);
+      }
+      function updatePriceUI() {
+        $marketSymbol.textContent = SYMBOLS[state.symbol].display;
+        $livePrice.textContent = state.price ? state.price.toFixed(2) : "--";
+        $trend.textContent = state.trend || "--";
+        $trend.className = "trend" + (state.trend === "Falling" ? " down" : "");
+      }
+      function updateSignalUI() {
+        $signal.textContent = state.signal;
+        $confidence.textContent = state.confidence === "--" ? "--" : `${state.confidence}%`;
+        $signal.style.color = state.signal === "UP" ? "var(--good)" : state.signal === "DOWN" ? "var(--bad)" : "var(--text)";
+        $signal.style.textShadow = state.signal === "UP" ? "0 0 13px #00d39544" : state.signal === "DOWN" ? "0 0 13px #ff3c5144" : "";
+      }
+      function updateTimerUI() {
+        let m = Math.floor(state.countdown/60);
+        let s = state.countdown%60;
+        $timer.textContent = `${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
+      }
+      function updateStatusUI() {
+        $statusDot.className = "status-dot" + (state.running ? " running" : "");
+        $statusLabel.textContent = state.running ? "Running" : "Stopped";
+        $startBtn.disabled = !!state.running;
+        $stopBtn.disabled = !state.running;
+      }
+      function updateHistoryUI() {
+        $historyBody.innerHTML = "";
+        state.history.forEach(row => {
+          $historyBody.innerHTML += `
+            <tr>
+              <td>${row.time}</td>
+              <td>${SYMBOLS[row.symbol].display}</td>
+              <td>${row.interval}m</td>
+              <td style="font-weight:700;color:${row.signal==="UP"?"var(--good)":"var(--bad)"}">${row.signal}</td>
+              <td>${row.startPrice ? row.startPrice.toFixed(2) : "--"}</td>
+              <td>${row.closePrice ? row.closePrice.toFixed(2) : "--"}</td>
+              <td class="${row.result === "WIN" ? "result-win":"result-lose"}">${row.result || "--"}</td>
+            </tr>
+          `;
+        });
+      }
+      function formatTime(ts) {
+        let d = new Date(ts);
+        return `${d.getHours().toString().padStart(2,"0")}:${d.getMinutes().toString().padStart(2,"0")}:${d.getSeconds().toString().padStart(2,"0")}`;
+      }
+      // User notification (mobile-friendly)
+      function responsiveNotify(msg) {
+        if (window.innerWidth < 650) alert(msg);
+      }
+
+      // Fetch close price, update result, push to history
+      async function fetchClosePriceAndUpdateResult() {
+        try {
+          let candles = await fetchKlines(state.symbol, state.interval, 1);
+          state.closePrice = candles[candles.length-1];
+          let result;
+          if (state.signal === "UP") {
+            result = state.closePrice >= state.startPrice ? "WIN" : "LOSE";
+          } else if (state.signal === "DOWN") {
+            result = state.closePrice <= state.startPrice ? "WIN" : "LOSE";
+          } else result = "--";
+          state.history.unshift({
+            time: state.currentSignalInfo.time,
+            symbol: state.symbol,
+            interval: state.interval,
+            signal: state.signal,
+            startPrice: state.startPrice,
+            closePrice: state.closePrice,
+            result
+          });
+          if (state.history.length > 8) state.history.length = 8;
+          updateHistoryUI();
+          stopSignal();
+        } catch {
+          responsiveNotify("Failed to close signal.");
+        }
+      }
+      // --- Event Listeners ---
+      $symbolToggle.querySelectorAll(".toggle-btn").forEach(btn => {
+        btn.onclick = () => {
+          $symbolToggle.querySelectorAll(".toggle-btn").forEach(b=>b.classList.remove("selected"));
+          btn.classList.add("selected");
+          state.symbol = btn.dataset.symbol;
+          $marketSymbol.textContent = SYMBOLS[state.symbol].display;
+          updateHistoryUI();
+        };
+      });
+      $intervalToggle.querySelectorAll(".toggle-btn").forEach(btn => {
+        btn.onclick = () => {
+          $intervalToggle.querySelectorAll(".toggle-btn").forEach(b=>b.classList.remove("selected"));
+          btn.classList.add("selected");
+          state.interval = parseInt(btn.dataset.interval);
+          updateHistoryUI();
+        };
+      });
+      $startBtn.onclick = () => {
+        if (state.running) return;
+        state.running = true;
+        updateStatusUI();
+        $signal.textContent = $confidence.textContent = "--";
+        startPriceFeed();
+        doSignalCycle();
+      };
+      $stopBtn.onclick = () => {
+        stopSignal();
+      };
+      function stopSignal() {
+        state.running = false;
+        updateStatusUI();
+        stopPriceFeed();
+        clearTimeout(state.timer);
+        $trend.textContent = "--";
+        $signal.textContent = $confidence.textContent = "--";
+      }
+    }
+  </script>
+</body>
+</html>
